@@ -1,5 +1,6 @@
 
 {block name="page"}
+{*plugins/generic/ompxml/templates/settingsForm.tpl*}
     <h1 class="app__pageHeading">
         {$pageTitle|escape}
     </h1>
@@ -58,7 +59,40 @@
         </div>
 
         <div id="specialTab">
-            <p>{translate key="calma calabreso"}</p>
+<form id="exportXmlForm" class="pkp_form" action="{url router=$smarty.const.ROUTE_COMPONENT op="manage" category="generic" plugin="ompxmlplugin" verb="export"}" method="post">			{csrf}
+			{fbvFormArea id="exportForm"}
+				<submissions-list-panel
+					v-bind="components.submissions"
+					@set="set"
+				>
+
+					<template v-slot:item="{ldelim}item{rdelim}">
+						<div class="listPanel__itemSummary">
+							<label>
+								<input
+									type="radio"
+									name="selectedSubmissions[]"
+									:value="item.id"
+									v-model="selectedSubmissions"
+								/>
+								<span class="listPanel__itemSubTitle">
+									{{ localize(item.publications.find(p => p.id == item.currentPublicationId).fullTitle) }}
+								</span>
+							</label>
+							<pkp-button element="a" :href="item.urlWorkflow" style="margin-left: auto;">
+								{{ __('common.view') }}
+							</pkp-button>
+						</div>
+					</template>
+				</submissions-list-panel>
+				{fbvFormSection}
+					
+					<pkp-button @click="submit('#exportXmlForm')">
+						{translate key="plugins.importexport.exml.exportSubmissions"}
+					</pkp-button>
+				{/fbvFormSection}
+			{/fbvFormArea}
+		</form>
         </div>
     </div>
 {/block}
